@@ -1,0 +1,20 @@
+{
+    "name": "Enderlook.Unity.AudioManager.Editor",
+    "rootNamespace": "",
+    "references": [
+        "GUID:78eac7325b2e27244889c63f80c1d095",
+        "GUID:70bb7604d926506479be15f5272e3957",
+        "GUID:9fd50841bb502114684149a9483ebdf6"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

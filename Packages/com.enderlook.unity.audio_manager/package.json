@@ -1,0 +1,14 @@
+{
+  "name": "com.enderlook.unity.audio_manager",
+  "version": "0.1.0",
+  "displayName": "Enderlook Unity Audio Manager",
+  "description": "An audio manager for Unity.",
+  "keywords": [
+    "utility",
+    "audio",
+    "sound"
+  ],
+  "dependencies": {
+    "com.enderlook.unity.toolset": "https://github.com/Enderlook/Unity-Toolset.git?path=Packages/com.enderlook.unity.toolset#com.enderlook.unity.toolset/v0.2.7"
+  }
+}
