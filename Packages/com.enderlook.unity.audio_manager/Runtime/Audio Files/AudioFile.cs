@@ -11,6 +11,8 @@ namespace Enderlook.Unity.AudioManager
         /// Configure the audio file to start executing this file.
         /// </summary>
         /// <param name="audioSource">Audio source to configure.</param>
-        internal abstract void ConfigureAudioSource(AudioSource audioSource);
+        /// <param name="loop">Whenever audio must loop.</param>
+        /// <returns>Enumerator of the sound.</returns>
+        internal abstract IAudioFileNextEnumerator StartEnumerator(AudioSource audioSource, bool loop);
     }
 }

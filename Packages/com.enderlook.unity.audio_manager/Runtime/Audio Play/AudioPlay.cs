@@ -19,11 +19,12 @@ namespace Enderlook.Unity.AudioManager
         private static int totalId;
 
         private readonly AudioFile audioFile;
-        private readonly Transform follow;
-        private readonly Vector3 position;
         private Handle handle;
-        private int generation;
-        private float storedDuration;
+        private int generation; // If negative this contains other information described by constants named GENERATION_.
+        private Memento memento;
+
+        private const int GENERATION_PAUSED = -1;
+        private const int GENERATION_STOPPED = -2;
 
         internal static int PoolSize {
             private get => poolSize;
@@ -76,6 +77,21 @@ namespace Enderlook.Unity.AudioManager
             }
         }
 
+        /// <summary>
+        /// Determines if audio is being played.
+        /// </summary>
+        public bool IsPlaying => generation == handle.Generation;
+
+        /// <summary>
+        /// Determines if audio is paused.
+        /// </summary>
+        public bool IsPaused => generation == GENERATION_PAUSED;
+
+        /// <summary>
+        /// Determines if audio is stopped.
+        /// </summary>
+        public bool IsStopped => generation == GENERATION_STOPPED;
+
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal static AudioPlay Play(AudioFile audioFile, Vector3 location, bool loop = false)
             => new AudioPlay(audioFile, location, loop);
@@ -85,30 +101,27 @@ namespace Enderlook.Unity.AudioManager
             => new AudioPlay(audioFile, follow, loop);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private AudioPlay(AudioFile audioFile, bool loop = false)
+        private AudioPlay(AudioFile audioFile, Vector3 position, bool loop = false)
         {
-            handle = GetOrCreateHandle(audioFile);
-            handle.Play();
             this.audioFile = audioFile;
+            handle = GetOrCreateHandle();
             generation = handle.Generation;
-            storedDuration = 0;
-            handle.SetLoop(loop);
-            position = default;
-            follow = null;
+            handle.Feed(audioFile, loop);
+            handle.Play();
+            handle.TrackPosition(position);
+            memento = handle.SaveMemento();
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private AudioPlay(AudioFile audioFile, Vector3 position, bool loop = false) : this(audioFile, loop)
+        private AudioPlay(AudioFile audioFile, Transform follow, bool loop = false)
         {
-            this.position = position;
-            handle.TrackPosition(position);
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private AudioPlay(AudioFile audioFile, Transform follow, bool loop = false) : this(audioFile, loop)
-        {
-            this.follow = follow;
-            handle.TrackPosition(position);
+            this.audioFile = audioFile;
+            handle = GetOrCreateHandle();
+            generation = handle.Generation;
+            handle.Feed(audioFile, loop);
+            handle.Play();
+            handle.TrackPosition(follow);
+            memento = handle.SaveMemento();
         }
 
         /// <summary>
@@ -117,41 +130,47 @@ namespace Enderlook.Unity.AudioManager
         public void Stop()
         {
             if (generation == handle.Generation)
-            {
-                handle.Stop();
-                Return(this);
-            }
+                memento = handle.Stop();
+            generation = GENERATION_STOPPED;
         }
 
         /// <summary>
         /// Pause the execution of an audio.
         /// </summary>
+        /// <returns><see langword="true"/> if the audio was paused or has been paused. <see langword="false"/> if the audio has already finalized.</returns>
         public void Pause()
         {
             if (generation == handle.Generation)
             {
-                storedDuration = handle.Pause();
-                Return(this);
+                memento = handle.Pause();
+                generation = GENERATION_PAUSED;
             }
+            else
+                ThrowCanNotPause();
         }
 
         /// <summary>
-        /// Reanude the execution of an audio from <see cref="Pause"/> or start over if <see cref="Stop"/> was executed or it finalized playing.
+        /// Reanude the execution of an audio from <see cref="Pause"/> or start from zero if has finalized or stopped.
         /// </summary>
-        public void Play()
+        public void Reanude()
         {
             if (generation != handle.Generation)
             {
-                handle = GetOrCreateHandle(audioFile);
+                handle = GetOrCreateHandle();
+                int state = generation;
                 generation = handle.Generation;
+                if (state == GENERATION_PAUSED)
+                    handle.LoadMementoAndPlay(memento);
+                else
+                {
+                    memento = memento.FromZero();
+                    handle.LoadMementoAndPlay(memento);
+                }
             }
-
-            handle.PlayFrom(storedDuration);
-            storedDuration = 0;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static Handle GetOrCreateHandle(AudioFile audioFile)
+        private static Handle GetOrCreateHandle()
         {
             if (poolIndex >= 0)
             {
@@ -164,7 +183,6 @@ namespace Enderlook.Unity.AudioManager
                     if (hidePooledObjects)
                         gameObject.hideFlags = HideFlags.None;
 #endif
-                    handle.Initialize(audioFile);
                     return handle;
                 }
             }
@@ -202,13 +220,9 @@ namespace Enderlook.Unity.AudioManager
                         break;
                     }
                 }
-                handle.Initialize(audioFile);
                 return handle;
             }
         }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static void Return(AudioPlay handler) => Return(handler.handle);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static void Return(Handle handle)
@@ -234,6 +248,9 @@ namespace Enderlook.Unity.AudioManager
 
         [MethodImpl(MethodImplOptions.NoInlining)]
         private static void ThrowAudioHasEnded() => throw new InvalidOperationException("Audio has already ended.");
+
+        [MethodImpl(MethodImplOptions.NoInlining)]
+        private static void ThrowCanNotPause() => throw new InvalidOperationException("Can't pause an audio which is stopped or has finallized.");
 
         [MethodImpl(MethodImplOptions.NoInlining)]
         private static void ThrowVolumeArgumentException() => throw new ArgumentException("value", "Must be a value from 0 to 1.");

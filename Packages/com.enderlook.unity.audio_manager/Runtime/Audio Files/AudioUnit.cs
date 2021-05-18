@@ -57,7 +57,19 @@ namespace Enderlook.Unity.AudioManager
         [SerializeField]
         private AnimationCurve customRolloffCurve;
 
-        internal override void ConfigureAudioSource(AudioSource audioSource)
+        private OnceEnumerator once;
+        private LoopEnumerator loop;
+
+        internal override IAudioFileNextEnumerator StartEnumerator(AudioSource audioSource, bool loop)
+        {
+            Set(audioSource);
+            if (loop)
+                return this.loop ?? (this.loop = new LoopEnumerator(this));
+            else
+                return once ?? (once = new OnceEnumerator(this));
+        }
+
+        private void Set(AudioSource audioSource)
         {
 #if DEBUG
             if (audioClip == null)
@@ -93,6 +105,40 @@ namespace Enderlook.Unity.AudioManager
 
             if (volumeRolloff == AudioRolloffMode.Custom)
                 audioSource.SetCustomCurve(AudioSourceCurveType.CustomRolloff, customRolloffCurve);
+        }
+
+        private sealed class OnceEnumerator : IAudioFileNextEnumerator
+        {
+            private readonly AudioUnit unit;
+
+            public OnceEnumerator(AudioUnit unit)
+            {
+                Debug.Assert(!(unit is null));
+                this.unit = unit;
+            }
+
+            public void ApplyCurrent(AudioSource audioSource) => unit.Set(audioSource);
+
+            public bool MoveNext(AudioSource source) => false;
+        }
+
+        private sealed class LoopEnumerator : IAudioFileNextEnumerator
+        {
+            private readonly AudioUnit unit;
+
+            public LoopEnumerator(AudioUnit unit)
+            {
+                Debug.Assert(!(unit is null));
+                this.unit = unit;
+            }
+
+            public void ApplyCurrent(AudioSource audioSource) => unit.Set(audioSource);
+
+            public bool MoveNext(AudioSource audioSource)
+            {
+                unit.Set(audioSource);
+                return true;
+            }
         }
     }
 }

@@ -1,6 +1,6 @@
 {
   "name": "com.enderlook.unity.audio_manager",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "displayName": "Enderlook Unity Audio Manager",
   "description": "An audio manager for Unity.",
   "keywords": [
