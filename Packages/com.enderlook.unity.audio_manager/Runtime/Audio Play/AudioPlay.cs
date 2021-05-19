@@ -63,7 +63,7 @@ namespace Enderlook.Unity.AudioManager
         private AudioPlay(AudioFile audioFile, Vector3 position, bool loop = false)
         {
             this.audioFile = audioFile;
-            handle = GetOrCreateHandle();
+            handle = Pool.GetOrCreateHandle();
             generation = handle.Generation;
             handle.Feed(audioFile, loop);
             handle.Play();
@@ -75,7 +75,7 @@ namespace Enderlook.Unity.AudioManager
         private AudioPlay(AudioFile audioFile, Transform follow, bool loop = false)
         {
             this.audioFile = audioFile;
-            handle = GetOrCreateHandle();
+            handle = Pool.GetOrCreateHandle();
             generation = handle.Generation;
             handle.Feed(audioFile, loop);
             handle.Play();
@@ -115,7 +115,7 @@ namespace Enderlook.Unity.AudioManager
         {
             if (generation != handle.Generation)
             {
-                handle = GetOrCreateHandle();
+                handle = Pool.GetOrCreateHandle();
                 int state = generation;
                 generation = handle.Generation;
                 if (state == GENERATION_PAUSED)

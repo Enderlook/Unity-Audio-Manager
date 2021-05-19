@@ -135,7 +135,7 @@ namespace Enderlook.Unity.AudioManager
                 // Set to null in order to allow the GC collect it.
                 follow = null;
                 enumerator = null;
-                AudioPlay.Return(this);
+                Pool.Return(this);
             }
         }
     }
