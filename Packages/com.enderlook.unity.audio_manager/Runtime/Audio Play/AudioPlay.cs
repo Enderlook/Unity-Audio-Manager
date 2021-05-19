@@ -175,7 +175,7 @@ namespace Enderlook.Unity.AudioManager
             if (poolIndex >= 0)
             {
                 Handle handle = pool[poolIndex--];
-                if (handle.gameObject != null)
+                if (handle != null)
                 {
                     GameObject gameObject = handle.gameObject;
                     gameObject.SetActive(true);
@@ -198,7 +198,7 @@ namespace Enderlook.Unity.AudioManager
                     if (poolIndex >= 0)
                     {
                         handle = pool[poolIndex--];
-                        if (handle.gameObject != null)
+                        if (handle != null)
                         {
                             GameObject gameObject = handle.gameObject;
                             gameObject.SetActive(true);
