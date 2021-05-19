@@ -57,9 +57,12 @@ namespace Enderlook.Unity.AudioManager
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal void UpdateValues()
         {
-            masterAudioMixer.audioMixer.SetFloat(masterVolumeName, GetVolume(masterVolumeMuted, masterVolume));
-            soundAudioMixer.audioMixer.SetFloat(soundVolumeName, GetVolume(soundVolumeMuted, soundVolume));
-            musicAudioMixer.audioMixer.SetFloat(musicVolumeName, GetVolume(musicVolumeMuted, musicVolume));
+            if (masterAudioMixer != null && !string.IsNullOrEmpty(masterVolumeName))
+                masterAudioMixer.audioMixer.SetFloat(masterVolumeName, GetVolume(masterVolumeMuted, masterVolume));
+            if (soundAudioMixer != null && !string.IsNullOrEmpty(soundVolumeName))
+                soundAudioMixer.audioMixer.SetFloat(soundVolumeName, GetVolume(soundVolumeMuted, soundVolume));
+            if (musicAudioMixer != null && !string.IsNullOrEmpty(musicVolumeName))
+                musicAudioMixer.audioMixer.SetFloat(musicVolumeName, GetVolume(musicVolumeMuted, musicVolume));
             AudioPlay.PoolSize = audioSourcePoolSize;
         }
 
