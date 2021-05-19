@@ -11,6 +11,11 @@ namespace Enderlook.Unity.AudioManager
     /// </summary>
     public sealed class AudioController : MonoBehaviour
     {
+#if UNITY_EDITOR
+        private const bool HideController = true;
+        internal const bool HidePooledObjects = true;
+#endif
+
         private static AudioControllerUnit configuration;
         private static AudioController behaviour;
 
@@ -206,12 +211,17 @@ namespace Enderlook.Unity.AudioManager
             Instance.UpdateValues();
 
 #if UNITY_EDITOR
-            gameObject.hideFlags = HideFlags.HideAndDontSave;
+            if (HideController)
+                gameObject.hideFlags = HideFlags.HideAndDontSave;
 #endif
         }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Code Quality", "IDE0051:Remove unused private members", Justification = "Used by Unity.")]
-        private void Update() => Instance.UpdateValues();
+        private void Update()
+        {
+            Instance.UpdateValues();
+            AudioPlay.TryClearPool();
+        }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Code Quality", "IDE0051:Remove unused private members", Justification = "Used by Unity.")]
         private void FixedUpdate() => Instance.UpdateValues();
