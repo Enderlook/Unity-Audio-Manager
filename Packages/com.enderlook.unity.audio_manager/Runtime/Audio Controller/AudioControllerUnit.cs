@@ -50,10 +50,6 @@ namespace Enderlook.Unity.AudioManager
         [SerializeField, Tooltip("Name of the variable in the Sound Audio Mixer that controls its volume.")]
         private string soundVolumeName;
 
-        [Header("Others")]
-        [SerializeField, Tooltip("Amount of Audio Sources that will be pooled.")]
-        internal int audioSourcePoolSize = 100;
-
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal void UpdateValues()
         {
@@ -63,7 +59,6 @@ namespace Enderlook.Unity.AudioManager
                 soundAudioMixer.audioMixer.SetFloat(soundVolumeName, GetVolume(soundVolumeMuted, soundVolume));
             if (musicAudioMixer != null && !string.IsNullOrEmpty(musicVolumeName))
                 musicAudioMixer.audioMixer.SetFloat(musicVolumeName, GetVolume(musicVolumeMuted, musicVolume));
-            AudioPlay.PoolSize = audioSourcePoolSize;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

@@ -3,8 +3,6 @@ using System.Runtime.CompilerServices;
 
 using UnityEngine;
 
-using UnityObject = UnityEngine.Object;
-
 namespace Enderlook.Unity.AudioManager
 {
     /// <summary>
@@ -19,39 +17,6 @@ namespace Enderlook.Unity.AudioManager
 
         private const int GENERATION_PAUSED = -1;
         private const int GENERATION_STOPPED = -2;
-
-        internal static int PoolSize {
-            private get => poolSize;
-            set {
-                if (value == poolSize)
-                    return;
-
-                SlowPath();
-
-                //[MethodImpl(MethodImplOptions.NoInlining)] // TODO: Add this in C# 9
-                void SlowPath()
-                {
-                    if (poolSize < 0)
-                        ThrowNegativeValue();
-
-                    poolSize = value;
-                    Handle[] newPool = new Handle[value];
-                    if (value > poolIndex)
-                    {
-                        if (poolIndex != -1)
-                            Array.Copy(pool, newPool, poolIndex);
-                    }
-                    else
-                    {
-                        Array.Copy(pool, 0, newPool, 0, poolSize);
-                        for (int i = poolSize; i < poolIndex; i++)
-                            UnityObject.Destroy(pool[i]);
-                        poolIndex = poolSize;
-                    }
-                    pool = newPool;
-                }
-            }
-        }
 
         /// <summary>
         /// Configures the relative volume of the audio source.
@@ -162,9 +127,6 @@ namespace Enderlook.Unity.AudioManager
                 }
             }
         }
-
-        [MethodImpl(MethodImplOptions.NoInlining)]
-        private static void ThrowNegativeValue() => throw new ArgumentOutOfRangeException("value", "Can't be negative");
 
         [MethodImpl(MethodImplOptions.NoInlining)]
         private static void ThrowAudioHasEnded() => throw new InvalidOperationException("Audio has already ended.");

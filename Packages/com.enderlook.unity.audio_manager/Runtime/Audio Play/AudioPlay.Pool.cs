@@ -9,8 +9,9 @@ namespace Enderlook.Unity.AudioManager
 {
     public partial struct AudioPlay
     {
-        private static int poolSize = 100;
-        private static Handle[] pool = new Handle[poolSize];
+        private const int INITIAL_CAPACITY = 128;
+        private const int GROW_FACTOR = 2;
+        private static Handle[] pool = new Handle[INITIAL_CAPACITY];
         private static int poolIndex = -1;
 
         private static int totalId;
@@ -88,8 +89,9 @@ namespace Enderlook.Unity.AudioManager
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static void Return(Handle handle)
         {
+            Handle[] pool_ = pool;
             int index = poolIndex + 1;
-            if (index < PoolSize)
+            if (index < pool_.Length)
             {
                 GameObject gameObject = handle.gameObject;
                 gameObject.SetActive(false);
@@ -97,11 +99,29 @@ namespace Enderlook.Unity.AudioManager
                 if (AudioController.HidePooledObjects)
                     gameObject.hideFlags = HideFlags.HideInHierarchy;
 #endif
-                pool[index] = handle;
+                pool_[index] = handle;
                 poolIndex = index;
             }
             else
-                UnityObject.Destroy(handle.gameObject);
+                ReturnSlowPath(handle);
+        }
+
+        [MethodImpl(MethodImplOptions.NoInlining)]
+        private static void ReturnSlowPath(Handle handle)
+        {
+            Handle[] pool_ = pool;
+            Array.Resize(ref pool_, pool_.Length * GROW_FACTOR);
+            pool = pool_;
+
+            int index = poolIndex + 1;
+            GameObject gameObject = handle.gameObject;
+            gameObject.SetActive(false);
+#if UNITY_EDITOR
+            if (AudioController.HidePooledObjects)
+                gameObject.hideFlags = HideFlags.HideInHierarchy;
+#endif
+            pool_[index] = handle;
+            poolIndex = index;
         }
 
         private sealed class Gen2CollectCallback
@@ -116,7 +136,7 @@ namespace Enderlook.Unity.AudioManager
 
         internal static void TryClearPool()
         {
-            if (!isClearingPoolRequested || allowClearAt <= Time.realtimeSinceStartup)
+            if (!isClearingPoolRequested || Time.realtimeSinceStartup < allowClearAt)
                 return;
 
             isClearingPoolRequested = false;
@@ -133,8 +153,12 @@ namespace Enderlook.Unity.AudioManager
                     UnityObject.Destroy(handle.gameObject);
             }
 
-            Array.Clear(pool_, 0, pool_.Length);
             poolIndex = 0;
+
+            if (pool_.Length != INITIAL_CAPACITY)
+                pool = new Handle[pool_.Length / GROW_FACTOR];
+            else
+                Array.Clear(pool_, 0, pool_.Length);
         }
     }
 }

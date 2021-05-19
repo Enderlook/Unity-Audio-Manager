@@ -106,14 +106,6 @@ namespace Enderlook.Unity.AudioManager
         /// </summary>
         public static AudioMixerGroup SoundAudioMixer => Instance.soundAudioMixer;
 
-        /// <summary>
-        /// Amount of <see cref="AudioSource"/> that will be pooled.
-        /// </summary>
-        public static int AudioSourcePoolSize {
-            get => Instance.audioSourcePoolSize;
-            set => Instance.audioSourcePoolSize = value;
-        }
-
         internal static void SetBasicToAudioSource(AudioSource audioSource,  AudioType audioType)
         {
             switch (audioType)
