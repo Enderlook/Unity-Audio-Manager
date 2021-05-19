@@ -10,7 +10,6 @@ namespace Enderlook.Unity.AudioManager
     /// </summary>
     public partial struct AudioPlay
     {
-        private readonly AudioFile audioFile;
         private Handle handle;
         private int generation; // If negative this contains other information described by constants named GENERATION_.
         private Memento memento;
@@ -62,7 +61,6 @@ namespace Enderlook.Unity.AudioManager
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private AudioPlay(AudioFile audioFile, Vector3 position, bool loop = false)
         {
-            this.audioFile = audioFile;
             handle = Pool.GetOrCreateHandle();
             generation = handle.Generation;
             handle.Feed(audioFile, loop);
@@ -74,7 +72,6 @@ namespace Enderlook.Unity.AudioManager
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private AudioPlay(AudioFile audioFile, Transform follow, bool loop = false)
         {
-            this.audioFile = audioFile;
             handle = Pool.GetOrCreateHandle();
             generation = handle.Generation;
             handle.Feed(audioFile, loop);
