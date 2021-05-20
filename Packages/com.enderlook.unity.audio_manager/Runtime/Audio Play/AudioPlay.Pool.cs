@@ -11,8 +11,15 @@ namespace Enderlook.Unity.AudioManager
     {
         private static class Pool
         {
-            private const int INITIAL_CAPACITY = 128;
-            private const int GROW_FACTOR = 2;
+            private const int INITIAL_CAPACITY = 16;
+            // Just a random large enough power of GROW_FACTOR;
+            private const int MAXIMUM_CAPACITY = 32768;
+            private const float GROW_FACTOR = 2;
+            private const float SHRINK_FACTOR = 2;
+            private const float SHRINK_THRESHOLD = 1/3;
+            // We don't remove all objects, but a percentage of current objects in the pool, to prevent reallocating much.
+            private const float REMOVAL_FACTOR = .35f;
+
             private static Handle[] pool = new Handle[INITIAL_CAPACITY];
             private static int poolIndex = -1;
 
@@ -20,7 +27,7 @@ namespace Enderlook.Unity.AudioManager
 
             // Prevent the execution of multiple clears too frequently.
             // Useful when GC is incremental or non generational and so the finalizer object may be collected too frequently.
-            private const float minimumTimeBetweenClears = 60;
+            private const float MINIMUM_TIME_BETWEEN_CLEARS_IN_SECONDS = 30;
             private static bool isClearingPoolRequested;
             private static float allowClearAt;
 
@@ -79,7 +86,7 @@ namespace Enderlook.Unity.AudioManager
 #if UNITY_EDITOR
                         GameObject gameObject = new GameObject($"Enderlook.Unity.AudioManager AudioSource ({totalId++})");
 #else
-                    GameObject gameObject = new GameObject();
+                        GameObject gameObject = new GameObject();
 #endif
                         handle = gameObject.AddComponent<Handle>();
                         break;
@@ -112,7 +119,16 @@ namespace Enderlook.Unity.AudioManager
             private static void ReturnSlowPath(Handle handle)
             {
                 Handle[] pool_ = pool;
-                Array.Resize(ref pool_, pool_.Length * GROW_FACTOR);
+                int poolLength = pool_.Length;
+
+                int newLength = (int)Mathf.Min(poolLength * GROW_FACTOR, MAXIMUM_CAPACITY);
+                if (poolLength == MAXIMUM_CAPACITY)
+                {
+                    UnityObject.Destroy(handle);
+                    return;
+                }
+
+                Array.Resize(ref pool_, newLength);
                 pool = pool_;
 
                 int index = poolIndex + 1;
@@ -142,25 +158,54 @@ namespace Enderlook.Unity.AudioManager
                     return;
 
                 isClearingPoolRequested = false;
-                allowClearAt = Time.realtimeSinceStartup + minimumTimeBetweenClears;
+                allowClearAt = Time.realtimeSinceStartup + MINIMUM_TIME_BETWEEN_CLEARS_IN_SECONDS;
 
+                int poolIndex_ = poolIndex;
                 if (poolIndex == -1)
                     return;
 
                 Handle[] pool_ = pool;
-                for (int i = 0; i <= poolIndex; i++)
+
+                Handle _ = pool_[poolIndex_];
+
+                int toRemoveCount = Mathf.CeilToInt(poolIndex_ * REMOVAL_FACTOR);
+                for (int i = 0; i < toRemoveCount; i++)
                 {
-                    Handle handle = pool_[i];
+                    Handle handle = pool_[poolIndex_--];
                     if (handle != null)
                         UnityObject.Destroy(handle.gameObject);
                 }
 
-                poolIndex = 0;
+                int poolLength = pool_.Length;
+                if (poolLength > INITIAL_CAPACITY)
+                {
+                    Debug.Assert(SHRINK_THRESHOLD <= SHRINK_FACTOR);
 
-                if (pool_.Length != INITIAL_CAPACITY)
-                    pool = new Handle[pool_.Length / GROW_FACTOR];
-                else
-                    Array.Clear(pool_, 0, pool_.Length);
+                    int count = poolLength;
+                    while (true)
+                    {
+                        if ((float)poolIndex_ / count < SHRINK_THRESHOLD)
+                        {
+                            count = (int)(count / SHRINK_FACTOR);
+                            if (count <= INITIAL_CAPACITY)
+                            {
+                                count = INITIAL_CAPACITY;
+                                break;
+                            }
+                        }
+                        else
+                            break;
+                    }
+
+                    if (count != poolLength)
+                    {
+                        Handle[] newPool = new Handle[count];
+                        Array.Copy(pool_, newPool, poolIndex_);
+                        pool = newPool;
+                    }
+                }
+
+                poolIndex = poolIndex_;
             }
         }
 
