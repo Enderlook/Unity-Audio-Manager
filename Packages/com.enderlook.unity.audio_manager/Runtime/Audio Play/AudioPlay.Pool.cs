@@ -31,7 +31,11 @@ namespace Enderlook.Unity.AudioManager
             private static bool isClearingPoolRequested;
             private static float allowClearAt;
 
-            static Pool() => new Gen2CollectCallback();
+            static Pool()
+            {
+                new Gen2CollectCallback();
+                Application.lowMemory += ClearCompletePool;
+            }
 
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public static Handle GetOrCreateHandle()
@@ -166,9 +170,15 @@ namespace Enderlook.Unity.AudioManager
 
                 Handle[] pool_ = pool;
 
-                Handle _ = pool_[poolIndex_];
-
                 int toRemoveCount = Mathf.CeilToInt(poolIndex_ * REMOVAL_FACTOR);
+
+                if ((uint)toRemoveCount <= (uint)pool_.Length)
+                {
+                    Debug.Assert(false, "Index out of range.");
+                    return;
+                }
+
+                int oldIndex = poolIndex_;
                 for (int i = 0; i < toRemoveCount; i++)
                 {
                     Handle handle = pool_[poolIndex_--];
@@ -204,8 +214,35 @@ namespace Enderlook.Unity.AudioManager
                         pool = newPool;
                     }
                 }
+                else
+                    Array.Clear(pool_, poolIndex_, oldIndex - poolIndex_);
 
                 poolIndex = poolIndex_;
+            }
+
+            private static void ClearCompletePool()
+            {
+                Handle[] pool_ = pool;
+                int poolIndex_ = poolIndex;
+
+                if ((uint)poolIndex_ >= pool_.Length)
+                {
+                    Debug.Assert(false, "Index out of range.");
+                    return;
+                }
+
+                for (int i = 0; i < poolIndex_; i++)
+                {
+                    Handle handle = pool_[i];
+                    if (handle != null)
+                        UnityObject.Destroy(handle.gameObject);
+                }
+
+                poolIndex = 0;
+                if (pool_.Length > INITIAL_CAPACITY)
+                    pool = new Handle[INITIAL_CAPACITY];
+                else
+                    Array.Clear(pool, 0, poolIndex_);
             }
         }
 
