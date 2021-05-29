@@ -130,7 +130,7 @@ namespace Enderlook.Unity.AudioManager
         public static AudioPlay PlayOneShoot(AudioFile audioFile, Vector3 location = default)
         {
             if (audioFile == null)
-                ThrowNullArgumentExceptionAudioUnit();
+                ThrowNullArgumentExceptionAudioFile();
 
             return AudioPlay.Play(audioFile, location, false);
         }
@@ -143,7 +143,7 @@ namespace Enderlook.Unity.AudioManager
         public static AudioPlay PlayOneShoot(AudioFile audioFile, Transform transform = default)
         {
             if (audioFile == null)
-                ThrowNullArgumentExceptionAudioUnit();
+                ThrowNullArgumentExceptionAudioFile();
 
             return AudioPlay.Play(audioFile, transform, false);
         }
@@ -156,7 +156,7 @@ namespace Enderlook.Unity.AudioManager
         public static AudioPlay PlayLoop(AudioFile audioFile, Vector3 location = default)
         {
             if (audioFile == null)
-                ThrowNullArgumentExceptionAudioUnit();
+                ThrowNullArgumentExceptionAudioFile();
 
             return AudioPlay.Play(audioFile, location, true);
         }
@@ -169,13 +169,13 @@ namespace Enderlook.Unity.AudioManager
         public static AudioPlay PlayLoop(AudioFile audioFile, Transform transform = default)
         {
             if (audioFile == null)
-                ThrowNullArgumentExceptionAudioUnit();
+                ThrowNullArgumentExceptionAudioFile();
 
             return AudioPlay.Play(audioFile, transform, true);
         }
 
         [MethodImpl(MethodImplOptions.NoInlining)]
-        private static void ThrowNullArgumentExceptionAudioUnit() => throw new ArgumentNullException("audioUnit");
+        private static void ThrowNullArgumentExceptionAudioFile() => throw new ArgumentNullException("audioUnit");
 
 #if UNITY_EDITOR
         private static bool isExiting;

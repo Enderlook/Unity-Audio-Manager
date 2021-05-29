@@ -65,7 +65,7 @@ namespace Enderlook.Unity.AudioManager
             generation = handle.Generation;
             handle.Feed(audioFile, loop);
             handle.Play();
-            handle.TrackPosition(position);
+            handle.SetPosition(position);
             memento = handle.SaveMemento();
         }
 
@@ -76,7 +76,7 @@ namespace Enderlook.Unity.AudioManager
             generation = handle.Generation;
             handle.Feed(audioFile, loop);
             handle.Play();
-            handle.TrackPosition(follow);
+            handle.FollowTransform(follow);
             memento = handle.SaveMemento();
         }
 

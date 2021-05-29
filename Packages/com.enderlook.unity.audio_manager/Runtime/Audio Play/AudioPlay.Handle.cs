@@ -77,12 +77,12 @@ namespace Enderlook.Unity.AudioManager
             }
 
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            public void TrackPosition(Vector3 position) => transform.position = position;
+            public void SetPosition(Vector3 position) => transform.position = position;
 
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            public void TrackPosition(Transform follow)
+            public void FollowTransform(Transform follow)
             {
-                TrackPosition(follow.position);
+                SetPosition(follow.position);
                 this.follow = follow;
             }
 
