@@ -12,7 +12,7 @@ namespace Enderlook.Unity.AudioManager
         private static class Pool
         {
             private const int INITIAL_CAPACITY = 16;
-            // Just a random large enough power of GROW_FACTOR;
+            // Just a random large enough power of GROW_FACTOR.
             private const int MAXIMUM_CAPACITY = 32768;
             private const float GROW_FACTOR = 2;
             private const float SHRINK_FACTOR = 2;
