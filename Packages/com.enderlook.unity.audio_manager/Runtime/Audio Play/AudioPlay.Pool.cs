@@ -165,7 +165,7 @@ namespace Enderlook.Unity.AudioManager
                 allowClearAt = Time.realtimeSinceStartup + MINIMUM_TIME_BETWEEN_CLEARS_IN_SECONDS;
 
                 int poolIndex_ = poolIndex;
-                if (poolIndex == -1)
+                if (poolIndex < 0)
                     return;
 
                 Handle[] pool_ = pool;
