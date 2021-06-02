@@ -174,7 +174,6 @@ namespace Enderlook.Unity.AudioManager
             return AudioPlay.Play(audioFile, transform, true);
         }
 
-        [MethodImpl(MethodImplOptions.NoInlining)]
         private static void ThrowNullArgumentExceptionAudioFile() => throw new ArgumentNullException("audioUnit");
 
 #if UNITY_EDITOR

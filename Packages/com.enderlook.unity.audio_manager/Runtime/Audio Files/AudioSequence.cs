@@ -31,7 +31,6 @@ namespace Enderlook.Unity.AudioManager
             return loop ? (IAudioFileNextEnumerator)new LoopEnumerator(this, currentEnumerator) : (IAudioFileNextEnumerator)new Enumerator(this, currentEnumerator);
         }
 
-        [MethodImpl(MethodImplOptions.NoInlining)]
         private static void ThrowIsEmptyException() => throw new InvalidOperationException("Audio collection is empty.");
 
         private sealed class Enumerator : IAudioFileNextEnumerator

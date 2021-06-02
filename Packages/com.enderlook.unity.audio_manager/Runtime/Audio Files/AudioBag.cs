@@ -71,7 +71,6 @@ namespace Enderlook.Unity.AudioManager
             }
         }
 
-        [MethodImpl(MethodImplOptions.NoInlining)]
         private static void ThrowIsEmptyException() => throw new InvalidOperationException("Audio bag is empty.");
     }
 }

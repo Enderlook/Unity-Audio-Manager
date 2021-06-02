@@ -125,13 +125,10 @@ namespace Enderlook.Unity.AudioManager
             }
         }
 
-        [MethodImpl(MethodImplOptions.NoInlining)]
         private static void ThrowAudioHasEnded() => throw new InvalidOperationException("Audio has already ended.");
 
-        [MethodImpl(MethodImplOptions.NoInlining)]
         private static void ThrowCanNotPause() => throw new InvalidOperationException("Can't pause an audio which is stopped or has finallized.");
 
-        [MethodImpl(MethodImplOptions.NoInlining)]
         private static void ThrowVolumeArgumentException() => throw new ArgumentException("value", "Must be a value from 0 to 1.");
     }
 }
