@@ -106,7 +106,7 @@ namespace Enderlook.Unity.AudioManager
         /// </summary>
         public static AudioMixerGroup SoundAudioMixer => Instance.soundAudioMixer;
 
-        internal static void SetBasicToAudioSource(AudioSource audioSource,  AudioType audioType)
+        internal static void SetBasicToAudioSource(AudioSource audioSource, AudioType audioType)
         {
             switch (audioType)
             {
