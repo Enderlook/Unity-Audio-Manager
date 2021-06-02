@@ -56,7 +56,11 @@ namespace Enderlook.Unity.AudioManager
         /// </summary>
         public static float MasterVolume {
             get => Instance.masterVolume;
-            set => Instance.masterVolume = value;
+            set {
+                if (value > 1 || value < 0)
+                    ThrowVolumeOutOfRangeException();
+                Instance.masterVolume = value;
+            }
         }
 
         /// <summary>
@@ -77,7 +81,11 @@ namespace Enderlook.Unity.AudioManager
         /// </summary>
         public static float MusicVolume {
             get => Instance.musicVolume;
-            set => Instance.musicVolume = value;
+            set {
+                if (value > 1 || value < 0)
+                    ThrowVolumeOutOfRangeException();
+                Instance.musicVolume = value;
+            }
         }
 
         /// <summary>
@@ -98,7 +106,11 @@ namespace Enderlook.Unity.AudioManager
         /// </summary>
         public static float SoundVolume {
             get => Instance.soundVolume;
-            set => Instance.soundVolume = value;
+            set {
+                if (value > 1 || value < 0)
+                    ThrowVolumeOutOfRangeException();
+                Instance.soundVolume = value;
+            }
         }
 
         /// <summary>
@@ -175,6 +187,8 @@ namespace Enderlook.Unity.AudioManager
         }
 
         private static void ThrowNullArgumentExceptionAudioFile() => throw new ArgumentNullException("audioUnit");
+
+        private static void ThrowVolumeOutOfRangeException() => throw new ArgumentOutOfRangeException("value", "Must be a value from 0 to 1.");
 
 #if UNITY_EDITOR
         private static bool isExiting;
