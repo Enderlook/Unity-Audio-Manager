@@ -172,7 +172,7 @@ namespace Enderlook.Unity.AudioManager
 
                 int toRemoveCount = Mathf.CeilToInt(poolIndex_ * REMOVAL_FACTOR);
 
-                if (unchecked((uint)toRemoveCount <= (uint)pool_.Length))
+                if (unchecked((uint)toRemoveCount >= (uint)pool_.Length))
                 {
                     Debug.Assert(false, "Index out of range.");
                     return;
