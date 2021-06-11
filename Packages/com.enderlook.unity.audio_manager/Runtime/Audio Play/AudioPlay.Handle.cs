@@ -10,7 +10,7 @@ namespace Enderlook.Unity.AudioManager
         internal sealed class Handle : MonoBehaviour
         {
             private AudioSource audioSource;
-            public int Generation { get; private set; }
+            public int Generation { get; private set; } = 1;
             private float returnAt;
 
             private Transform follow;
@@ -49,8 +49,8 @@ namespace Enderlook.Unity.AudioManager
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public Memento Pause()
             {
-                audioSource.Pause();
                 Memento memento = new Memento(enumerator, audioSource.clip, follow, transform.position, Volume, audioSource.time);
+                audioSource.Stop();
                 Return();
                 return memento;
             }
@@ -58,8 +58,8 @@ namespace Enderlook.Unity.AudioManager
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public Memento Stop()
             {
-                audioSource.Stop();
                 Memento memento = new Memento(enumerator, audioSource.clip, follow, transform.position, Volume, 0);
+                audioSource.Stop();
                 Return();
                 return memento;
             }

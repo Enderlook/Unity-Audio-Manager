@@ -11,34 +11,51 @@ namespace Enderlook.Unity.AudioManager
     public partial struct AudioPlay
     {
         private Handle handle;
-        private int generation; // If negative this contains other information described by constants named GENERATION_.
+        private int generation; // If negative or 0 this contains other information described by constants named GENERATION_.
         private Memento memento;
 
         private const int GENERATION_PAUSED = -1;
         private const int GENERATION_STOPPED = -2;
+        private const int GENERATION_DEFAULT = 0;
 
         /// <summary>
         /// Configures the relative volume of the audio source.
         /// </summary>
         public float Volume {
             get {
-                if (generation != handle.Generation)
-                    ThrowAudioHasEnded();
+                if (handle == null || generation != handle.Generation)
+                    ThrowAudioHasEndedException();
                 return handle.Volume;
             }
             set {
                 if (value < 0 || value > 1)
                     ThrowVolumeArgumentException();
-                if (generation != handle.Generation)
-                    ThrowAudioHasEnded();
+                if (handle == null || generation != handle.Generation)
+                    ThrowAudioHasEndedException();
                 handle.Volume = value;
+
+                static void ThrowVolumeArgumentException() => throw new ArgumentException("value", "Must be a value from 0 to 1.");
             }
         }
 
         /// <summary>
+        /// Determines if this instance is default.
+        /// </summary>
+        public bool IsDefault => generation == GENERATION_DEFAULT;
+
+        /// <summary>
         /// Determines if audio is being played.
         /// </summary>
-        public bool IsPlaying => generation == handle.Generation;
+        public bool IsPlaying {
+            get {
+                if (handle == null)
+                {
+                    ThrowIfDefault();
+                    return false;
+                }
+                return generation == handle.Generation;
+            }
+        }
 
         /// <summary>
         /// Determines if audio is paused.
@@ -46,7 +63,7 @@ namespace Enderlook.Unity.AudioManager
         public bool IsPaused => generation == GENERATION_PAUSED;
 
         /// <summary>
-        /// Determines if audio is stopped.
+        /// Determines if audio is stopped, which is not the same as if the audio has finallized.
         /// </summary>
         public bool IsStopped => generation == GENERATION_STOPPED;
 
@@ -81,54 +98,114 @@ namespace Enderlook.Unity.AudioManager
         }
 
         /// <summary>
-        /// Stop the execution of an audio.
+        /// Stop the execution of an audio. If the audio was paused, its duration is reseted.
         /// </summary>
+        /// <exception cref="ArgumentException">Throw when instance is default.</exception>
+        /// <exception cref="InvalidOperationException">Thrown when audio was already stopped or finalized.</exception>
         public void Stop()
         {
+            if (handle == null)
+                ThrowIfDefault();
+
             if (generation == handle.Generation)
+            {
                 memento = handle.Stop();
-            generation = GENERATION_STOPPED;
+                generation = GENERATION_STOPPED;
+            }
+            else if (generation == GENERATION_PAUSED)
+                generation = GENERATION_STOPPED;
+            else
+                ThrowCanNotStop();
+
+            static void ThrowCanNotStop() => throw new InvalidOperationException("Can't stop an audio which is already stopped or finallized.");
         }
 
         /// <summary>
         /// Pause the execution of an audio.
         /// </summary>
         /// <returns><see langword="true"/> if the audio was paused or has been paused. <see langword="false"/> if the audio has already finalized.</returns>
+        /// <exception cref="ArgumentException">Throw when instance is default.</exception>
+        /// <exception cref="InvalidOperationException">Throw when audio is stopped, paused or has finalized.</exception>
         public void Pause()
         {
+            if (handle == null)
+                SlowPath(ref this);
+
             if (generation == handle.Generation)
             {
                 memento = handle.Pause();
                 generation = GENERATION_PAUSED;
+                return;
             }
-            else
-                ThrowCanNotPause();
+
+            ThrowCanNotPauseException();
+
+            static void SlowPath(ref AudioPlay self)
+            {
+                self.ThrowIfDefault();
+                ThrowCanNotPauseException();
+            }
+
+            static void ThrowCanNotPauseException() => throw new InvalidOperationException("Can't pause an audio which is stopped, paused or has finallized.");
         }
 
         /// <summary>
-        /// Reanude the execution of an audio from <see cref="Pause"/> or start from zero if has finalized or stopped.
+        /// Reanude the execution of an audio if <see cref="Pause"/> was executed.
+        /// Start from zero if has <see cref="Stop"/> was executed.
+        /// Start from zero if audio has finalized.
         /// </summary>
-        public void Reanude()
+        /// <exception cref="ArgumentException">Throw when instance is default.</exception>
+        /// <exception cref="InvalidOperationException">Throw when audio is already playing.</exception>
+        public void Play()
         {
-            if (generation != handle.Generation)
+            if (handle == null)
             {
-                handle = Pool.GetOrCreateHandle();
-                int state = generation;
-                generation = handle.Generation;
-                if (state == GENERATION_PAUSED)
-                    handle.LoadMementoAndPlay(memento);
-                else
-                {
-                    memento = memento.FromZero();
-                    handle.LoadMementoAndPlay(memento);
-                }
+                SlowPath(ref this);
+                return;
+            }
+
+            int state = generation;
+            if (state == handle.Generation)
+                ThrowCanNotPlayException();
+
+            handle = Pool.GetOrCreateHandle();
+            generation = handle.Generation;
+            if (state == GENERATION_PAUSED)
+                handle.LoadMementoAndPlay(memento);
+            else
+            {
+                memento = memento.FromZero();
+                handle.LoadMementoAndPlay(memento);
+            }
+
+            static void ThrowCanNotPlayException() => throw new InvalidOperationException("Can't play an audio which is already playing.");
+
+            //[MethodImpl(MethodImplOptions.NoInlining)] // TODO: Add On C# 9
+            static void SlowPath(ref AudioPlay self)
+            {
+                self.ThrowIfDefault();
+
+                self.handle = Pool.GetOrCreateHandle();
+                self.generation = self.handle.Generation;
+
+                self.memento = self.memento.FromZero();
+                self.handle.LoadMementoAndPlay(self.memento);
             }
         }
 
-        private static void ThrowAudioHasEnded() => throw new InvalidOperationException("Audio has already ended.");
+        private void ThrowAudioHasEndedException()
+        {
+            ThrowIfDefault();
+            throw new InvalidOperationException("Audio has already ended.");
+        }
 
-        private static void ThrowCanNotPause() => throw new InvalidOperationException("Can't pause an audio which is stopped or has finallized.");
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private void ThrowIfDefault()
+        {
+            if (generation == GENERATION_DEFAULT)
+                ThrowIsDefaultException();
 
-        private static void ThrowVolumeArgumentException() => throw new ArgumentException("value", "Must be a value from 0 to 1.");
+            static void ThrowIsDefaultException() => throw new ArgumentException("Instance is default.");
+        }
     }
 }
