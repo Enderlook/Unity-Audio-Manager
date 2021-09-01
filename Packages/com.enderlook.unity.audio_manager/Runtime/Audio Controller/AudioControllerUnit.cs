@@ -62,6 +62,6 @@ namespace Enderlook.Unity.AudioManager
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static float GetVolume(bool isMuted, float volume) => isMuted ? 0 : (volume == 0 ? 0 : Mathf.Log(volume) * 20);
+        private static float GetVolume(bool isMuted, float volume) => isMuted ? -80 : (volume == 0 ? -80 : Mathf.Log(volume) * 20);
     }
 }
