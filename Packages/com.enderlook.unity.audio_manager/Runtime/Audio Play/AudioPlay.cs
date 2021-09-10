@@ -6,7 +6,8 @@ using UnityEngine;
 namespace Enderlook.Unity.AudioManager
 {
     /// <summary>
-    /// A handle that represent the playing of an <see cref="AudioFile"/>.
+    /// A handle that represent the playing of an <see cref="AudioFile"/>.<br/>
+    /// This handle should not be copied. It should be treated with move semantics.
     /// </summary>
     public partial struct AudioPlay
     {
