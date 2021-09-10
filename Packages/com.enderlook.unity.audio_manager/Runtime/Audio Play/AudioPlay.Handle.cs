@@ -37,7 +37,9 @@ namespace Enderlook.Unity.AudioManager
             public void Feed(AudioFile audioFile, bool loop)
             {
                 Debug.Assert(audioFile != null);
-                enumerator = audioFile.StartEnumerator(audioSource, loop);
+                IAudioFileNextEnumerator enumerator_ = audioFile.StartEnumerator(audioSource, loop);
+                Debug.Assert(enumerator_ != null);
+                enumerator = enumerator_;
                 automaticVolume = audioSource.volume;
                 manualVolume = 1;
                 returnAt = 0;

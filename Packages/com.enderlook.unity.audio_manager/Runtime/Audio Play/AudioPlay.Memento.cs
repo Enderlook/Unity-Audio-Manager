@@ -18,6 +18,8 @@ namespace Enderlook.Unity.AudioManager
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public Memento(IAudioFileNextEnumerator enumerator, AudioClip clip, Transform follow, Vector3 position, float manualVolume, float time)
             {
+                Debug.Assert(enumerator != null);
+                Debug.Assert(clip != null);
                 this.enumerator = enumerator;
                 this.clip = clip;
                 this.follow = follow;
