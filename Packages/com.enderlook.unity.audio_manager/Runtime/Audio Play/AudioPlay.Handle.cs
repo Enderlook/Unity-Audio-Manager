@@ -70,7 +70,9 @@ namespace Enderlook.Unity.AudioManager
                 transform.position = memento.position;
                 follow = memento.follow;
                 audioSource.clip = memento.clip;
-                memento.enumerator.ApplyCurrent(audioSource);
+                IAudioFileNextEnumerator enumerator_ = memento.enumerator;
+                enumerator = enumerator_;
+                enumerator_.ApplyCurrent(audioSource);
                 Volume = memento.manualVolume;
                 audioSource.Play();
                 audioSource.time = memento.time;
