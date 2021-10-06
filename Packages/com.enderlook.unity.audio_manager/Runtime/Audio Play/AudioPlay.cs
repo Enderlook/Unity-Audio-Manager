@@ -35,7 +35,10 @@ namespace Enderlook.Unity.AudioManager
                     ThrowAudioHasEndedException();
                 handle.Volume = value;
 
-                static void ThrowVolumeArgumentException() => throw new ArgumentException("value", "Must be a value from 0 to 1.");
+#if UNITY_2020_2_OR_NEWER
+                static
+#endif
+                void ThrowVolumeArgumentException() => throw new ArgumentException("value", "Must be a value from 0 to 1.");
             }
         }
 
@@ -118,7 +121,10 @@ namespace Enderlook.Unity.AudioManager
             else
                 ThrowCanNotStop();
 
-            static void ThrowCanNotStop() => throw new InvalidOperationException("Can't stop an audio which is already stopped or finallized.");
+#if UNITY_2020_2_OR_NEWER
+            static
+#endif
+            void ThrowCanNotStop() => throw new InvalidOperationException("Can't stop an audio which is already stopped or finallized.");
         }
 
         /// <summary>
@@ -141,13 +147,19 @@ namespace Enderlook.Unity.AudioManager
 
             ThrowCanNotPauseException();
 
-            static void SlowPath(ref AudioPlay self)
+#if UNITY_2020_2_OR_NEWER
+            static
+#endif
+            void SlowPath(ref AudioPlay self)
             {
                 self.ThrowIfDefault();
                 ThrowCanNotPauseException();
             }
 
-            static void ThrowCanNotPauseException() => throw new InvalidOperationException("Can't pause an audio which is stopped, paused or has finallized.");
+#if UNITY_2020_2_OR_NEWER
+            static
+#endif
+            void ThrowCanNotPauseException() => throw new InvalidOperationException("Can't pause an audio which is stopped, paused or has finallized.");
         }
 
         /// <summary>
@@ -179,10 +191,16 @@ namespace Enderlook.Unity.AudioManager
                 handle.LoadMementoAndPlay(memento);
             }
 
-            static void ThrowCanNotPlayException() => throw new InvalidOperationException("Can't play an audio which is already playing.");
+#if UNITY_2020_2_OR_NEWER
+            static
+#endif
+            void ThrowCanNotPlayException() => throw new InvalidOperationException("Can't play an audio which is already playing.");
 
             //[MethodImpl(MethodImplOptions.NoInlining)] // TODO: Add On C# 9
-            static void SlowPath(ref AudioPlay self)
+#if UNITY_2020_2_OR_NEWER
+            static
+#endif
+            void SlowPath(ref AudioPlay self)
             {
                 self.ThrowIfDefault();
 
@@ -206,7 +224,10 @@ namespace Enderlook.Unity.AudioManager
             if (generation == GENERATION_DEFAULT)
                 ThrowIsDefaultException();
 
-            static void ThrowIsDefaultException() => throw new ArgumentException("Instance is default.");
+#if UNITY_2020_2_OR_NEWER
+            static
+#endif
+            void ThrowIsDefaultException() => throw new ArgumentException("Instance is default.");
         }
     }
 }
