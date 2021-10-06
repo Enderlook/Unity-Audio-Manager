@@ -29,6 +29,9 @@ namespace Enderlook.Unity.AudioManager
             }
 
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            public Memento WithVolume(float value) => new Memento(enumerator, clip, follow, position, value, time);
+
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public Memento FromZero() => new Memento(enumerator, clip, follow, position, manualVolume, 0);
         }
     }

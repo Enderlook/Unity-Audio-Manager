@@ -22,18 +22,31 @@ namespace Enderlook.Unity.AudioManager
         /// <summary>
         /// Configures the relative volume of the audio source.
         /// </summary>
+        /// <exception cref="ArgumentException">Throw when instance is default.</exception>
+        /// <exception cref="ArgumentOutOfRangeException">Throw when value is out of range 0-1.</exception>
         public float Volume {
             get {
+                int generation = this.generation;
                 if (handle == null || generation != handle.Generation)
-                    ThrowAudioHasEndedException();
+                {
+                    if (generation == GENERATION_DEFAULT)
+                        ThrowIsDefaultException();
+                    return memento.manualVolume;
+                }
                 return handle.Volume;
             }
             set {
                 if (value < 0 || value > 1)
                     ThrowVolumeArgumentException();
+                int generation = this.generation;
                 if (handle == null || generation != handle.Generation)
-                    ThrowAudioHasEndedException();
-                handle.Volume = value;
+                {
+                    if (generation == GENERATION_DEFAULT)
+                        ThrowIsDefaultException();
+                    memento = memento.WithVolume(value);
+                }
+                else
+                    handle.Volume = value;
 
 #if UNITY_2020_2_OR_NEWER
                 static
@@ -43,20 +56,19 @@ namespace Enderlook.Unity.AudioManager
         }
 
         /// <summary>
-        /// Determines if this instance is default.
+        /// Determines if this instance is default, i.e: was constructed from <c>default(AudioPlay)</c> or <c>new AudioPlay()</c>.
         /// </summary>
         public bool IsDefault => generation == GENERATION_DEFAULT;
 
         /// <summary>
         /// Determines if audio is being played.
         /// </summary>
+        /// <exception cref="ArgumentException">Throw when instance is default.</exception>
         public bool IsPlaying {
             get {
-                if (handle == null)
-                {
-                    ThrowIfDefault();
-                    return false;
-                }
+                int generation = this.generation;
+                if (generation == GENERATION_DEFAULT)
+                    ThrowIsDefaultException();
                 return generation == handle.Generation;
             }
         }
@@ -108,23 +120,34 @@ namespace Enderlook.Unity.AudioManager
         /// <exception cref="InvalidOperationException">Thrown when audio was already stopped or finalized.</exception>
         public void Stop()
         {
-            if (handle == null)
-                ThrowIfDefault();
-
-            if (generation == handle.Generation)
+            int generation_ = generation;
+            if (handle != null)
             {
-                memento = handle.Stop();
-                generation = GENERATION_STOPPED;
+                if (generation_ == handle.Generation)
+                {
+                    memento = handle.Stop();
+                    generation = GENERATION_STOPPED;
+                    return;
+                }
+                else if (generation_ == GENERATION_PAUSED)
+                {
+                    generation = GENERATION_STOPPED;
+                    return;
+                }
             }
-            else if (generation == GENERATION_PAUSED)
-                generation = GENERATION_STOPPED;
-            else
-                ThrowCanNotStop();
+            ThrowHelper(generation_);
 
 #if UNITY_2020_2_OR_NEWER
             static
 #endif
-            void ThrowCanNotStop() => throw new InvalidOperationException("Can't stop an audio which is already stopped or finallized.");
+            void ThrowHelper(int generation)
+            {
+                if (generation == GENERATION_DEFAULT)
+                    ThrowIsDefaultException();
+                if (generation == GENERATION_STOPPED)
+                    throw new InvalidOperationException("Can't stop an audio which is stopped.");
+                throw new InvalidOperationException("Can't stop an audio which has already finalized.");
+            }
         }
 
         /// <summary>
@@ -135,31 +158,28 @@ namespace Enderlook.Unity.AudioManager
         /// <exception cref="InvalidOperationException">Throw when audio is stopped, paused or has finalized.</exception>
         public void Pause()
         {
-            if (handle == null)
-                SlowPath(ref this);
-
-            if (generation == handle.Generation)
+            int generation_ = generation;
+            if (handle != null && generation_ == handle.Generation)
             {
                 memento = handle.Pause();
                 generation = GENERATION_PAUSED;
-                return;
             }
-
-            ThrowCanNotPauseException();
+            else
+                ThrowHelper(generation_);
 
 #if UNITY_2020_2_OR_NEWER
             static
 #endif
-            void SlowPath(ref AudioPlay self)
+            void ThrowHelper(int generation)
             {
-                self.ThrowIfDefault();
-                ThrowCanNotPauseException();
+                if (generation == GENERATION_DEFAULT)
+                    ThrowIsDefaultException();
+                if (generation == GENERATION_PAUSED)
+                    throw new InvalidOperationException("Can't stop an audio which is paused.");
+                if (generation == GENERATION_STOPPED)
+                    throw new InvalidOperationException("Can't stop an audio which is stopped.");
+                throw new InvalidOperationException("Can't stop an audio which has already finalized.");
             }
-
-#if UNITY_2020_2_OR_NEWER
-            static
-#endif
-            void ThrowCanNotPauseException() => throw new InvalidOperationException("Can't pause an audio which is stopped, paused or has finallized.");
         }
 
         /// <summary>
@@ -171,19 +191,18 @@ namespace Enderlook.Unity.AudioManager
         /// <exception cref="InvalidOperationException">Throw when audio is already playing.</exception>
         public void Play()
         {
+            int generation_ = generation;
             if (handle == null)
             {
-                SlowPath(ref this);
-                return;
+                if (generation_ == GENERATION_DEFAULT)
+                    ThrowIsDefaultException();
             }
-
-            int state = generation;
-            if (state == handle.Generation)
+            else if (generation_ == handle.Generation)
                 ThrowCanNotPlayException();
 
             handle = Pool.GetOrCreateHandle();
             generation = handle.Generation;
-            if (state == GENERATION_PAUSED)
+            if (generation_ == GENERATION_PAUSED)
                 handle.LoadMementoAndPlay(memento);
             else
             {
@@ -195,39 +214,8 @@ namespace Enderlook.Unity.AudioManager
             static
 #endif
             void ThrowCanNotPlayException() => throw new InvalidOperationException("Can't play an audio which is already playing.");
-
-            //[MethodImpl(MethodImplOptions.NoInlining)] // TODO: Add On C# 9
-#if UNITY_2020_2_OR_NEWER
-            static
-#endif
-            void SlowPath(ref AudioPlay self)
-            {
-                self.ThrowIfDefault();
-
-                self.handle = Pool.GetOrCreateHandle();
-                self.generation = self.handle.Generation;
-
-                self.memento = self.memento.FromZero();
-                self.handle.LoadMementoAndPlay(self.memento);
-            }
         }
 
-        private void ThrowAudioHasEndedException()
-        {
-            ThrowIfDefault();
-            throw new InvalidOperationException("Audio has already ended.");
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private void ThrowIfDefault()
-        {
-            if (generation == GENERATION_DEFAULT)
-                ThrowIsDefaultException();
-
-#if UNITY_2020_2_OR_NEWER
-            static
-#endif
-            void ThrowIsDefaultException() => throw new ArgumentException("Instance is default.");
-        }
+        private static void ThrowIsDefaultException() => throw new ArgumentException("Instance is default.");
     }
 }
