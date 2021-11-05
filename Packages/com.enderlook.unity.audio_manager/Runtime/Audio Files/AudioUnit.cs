@@ -11,8 +11,8 @@ namespace Enderlook.Unity.AudioManager
         [SerializeField, Tooltip("Audio clip of this unit.")]
         private AudioClip audioClip;
 
-        [SerializeField, Tooltip("Type of audio.")]
-        private AudioType audioType;
+        [SerializeField, Tooltip("Audio group that this audio belongs to.")]
+        private string audioGroup;
 
         [SerializeField, ValueRangeFloat(0, 1), Tooltip("Relative volume of this audio.")]
         private ValueFloat volume = new ValueFloat(1);
@@ -76,7 +76,7 @@ namespace Enderlook.Unity.AudioManager
                 Debug.LogError("Audio Clip property of Audio Unit was null. This produced undefined behaviour. This error is only reported on debug.");
 #endif
 
-            AudioController.SetBasicToAudioSource(audioSource, audioType);
+            AudioController.SetBasicToAudioSource(audioSource, audioGroup);
             audioSource.clip = audioClip;
             audioSource.pitch = pitch.Value;
             audioSource.volume = volume.Value;

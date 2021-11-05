@@ -19,7 +19,7 @@ namespace Enderlook.Unity.AudioManager
         private static AudioControllerUnit configuration;
         private static AudioController behaviour;
 
-        private static AudioControllerUnit Instance {
+        internal static AudioControllerUnit Instance {
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             get {
                 if (configuration == null)
@@ -47,92 +47,72 @@ namespace Enderlook.Unity.AudioManager
         /// Determines if the game is muted.
         /// </summary>
         public static bool MasterVolumeMuted {
-            get => Instance.masterVolumeMuted;
-            set => Instance.masterVolumeMuted = value;
+            get => Instance.GetAudioGroup(0).isMuted;
+            set => Instance.GetAudioGroup(0).isMuted = value;
         }
 
         /// <summary>
         /// Global modifier of all audios.
         /// </summary>
         public static float MasterVolume {
-            get => Instance.masterVolume;
+            get => Instance.GetAudioGroup(0).volume;
             set {
                 if (value > 1 || value < 0)
                     ThrowVolumeOutOfRangeException();
-                Instance.masterVolume = value;
+                Instance.GetAudioGroup(0).volume = value;
             }
         }
 
         /// <summary>
         /// Global audio mixter group.
         /// </summary>
-        public static AudioMixerGroup MasterAudioMixer => Instance.masterAudioMixer;
+        public static AudioMixerGroup MasterAudioMixerGroup => Instance.GetAudioGroup(0).audioMixerGroup;
 
         /// <summary>
-        /// Global audio mixter group.
+        /// Determines if an audio group is muted.
         /// </summary>
-        public static bool MusicVolumeMuted {
-            get => Instance.musicVolumeMuted;
-            set => Instance.musicVolumeMuted = value;
-        }
+        /// <param name="audioGroupName">Name of the audio group.</param>
+        /// <returns>Whenever the specifeid audio group is muted or not.</returns>
+        public static bool GetVolumeMuted(string audioGroupName)
+            => Instance.GetAudioGroup(audioGroupName).isMuted;
 
         /// <summary>
-        /// Global modifier of all musics.
+        /// Determines if an audio group is muted.
         /// </summary>
-        public static float MusicVolume {
-            get => Instance.musicVolume;
-            set {
-                if (value > 1 || value < 0)
-                    ThrowVolumeOutOfRangeException();
-                Instance.musicVolume = value;
-            }
-        }
+        /// <param name="audioGroupName">Name of the audio group.</param>
+        /// <param name="isMuted">Whenever the specifeid audio group is muted or not.</param>
+        public static bool SetVolumeMuted(string audioGroupName, bool isMuted)
+            => Instance.GetAudioGroup(audioGroupName).isMuted = isMuted;
 
         /// <summary>
-        /// Music audio mixter group.
+        /// Get the volume of an audio group.
         /// </summary>
-        public static AudioMixerGroup MusicAudioMixer => Instance.musicAudioMixer;
+        /// <param name="audioGroupName">Name of the audio group.</param>
+        /// <returns>Volume of the specifeid audio group.</returns>
+        public static float GetVolume(string audioGroupName)
+            => Instance.GetAudioGroup(audioGroupName).volume;
 
         /// <summary>
-        /// Determines if sounds are muted.
+        /// Get the volume of an audio group.
         /// </summary>
-        public static bool SoundVolumeMuted {
-            get => Instance.soundVolumeMuted;
-            set => Instance.soundVolumeMuted = value;
-        }
+        /// <param name="audioGroupName">Name of the audio group.</param>
+        /// <param name="volume">Volume of the specifeid audio group.</param>
+        public static float SetVolume(string audioGroupName, float volume)
+            => Instance.GetAudioGroup(audioGroupName).volume = volume;
 
         /// <summary>
-        /// Global modifier of all sounds.
+        /// Get the audio mixer group of an audio group.
         /// </summary>
-        public static float SoundVolume {
-            get => Instance.soundVolume;
-            set {
-                if (value > 1 || value < 0)
-                    ThrowVolumeOutOfRangeException();
-                Instance.soundVolume = value;
-            }
-        }
+        /// <param name="audioGroupName">Name of the audio group.</param>
+        /// <returns>Audio mixer group of the specifeid audio group.</returns>
+        public static AudioMixerGroup GetAudioMixerGroup(string audioGroupName)
+            => Instance.GetAudioGroup(audioGroupName).audioMixerGroup;
 
-        /// <summary>
-        /// Sound audio mixter group.
-        /// </summary>
-        public static AudioMixerGroup SoundAudioMixer => Instance.soundAudioMixer;
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        internal static void SetBasicToAudioSource(AudioSource audioSource, string audioGroup)
+            => audioSource.outputAudioMixerGroup = GetAudioMixerGroup(audioGroup);
 
-        internal static void SetBasicToAudioSource(AudioSource audioSource, AudioType audioType)
-        {
-            switch (audioType)
-            {
-                case AudioType.Music:
-                    audioSource.outputAudioMixerGroup = MusicAudioMixer;
-                    break;
-                case AudioType.Sound:
-                    audioSource.outputAudioMixerGroup = SoundAudioMixer;
-                    break;
-                default:
-                    Debug.Assert(false, "Impossible state.");
-                    break;
-            }
-        }
+        internal static string[] GetGroupNamesEditorOnly() => Instance.GetGroupNamesEditorOnly();
 
         /// <summary>
         /// Play an audio once on the specified location.

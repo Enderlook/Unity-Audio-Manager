@@ -1,4 +1,7 @@
+using Enderlook.Unity.Toolset;
 using Enderlook.Unity.Toolset.Utils;
+
+using System;
 
 using UnityEditor;
 
@@ -16,7 +19,7 @@ namespace Enderlook.Unity.AudioManager
 
         private static readonly string[] options = new string[] { "Constant", "Curve" };
         private SerializedProperty audioClip;
-        private SerializedProperty audioType;
+        private SerializedProperty audioGroup;
         private SerializedProperty volume;
         private SerializedProperty pitch;
         private SerializedProperty priority;
@@ -36,7 +39,7 @@ namespace Enderlook.Unity.AudioManager
         private void OnEnable()
         {
             audioClip = serializedObject.FindProperty("audioClip");
-            audioType = serializedObject.FindProperty("audioType");
+            audioGroup = serializedObject.FindProperty("audioGroup");
             volume = serializedObject.FindProperty("volume");
             pitch = serializedObject.FindProperty("pitch");
             priority = serializedObject.FindProperty("priority");
@@ -59,7 +62,14 @@ namespace Enderlook.Unity.AudioManager
             this.DrawScriptField();
 
             EditorGUILayout.PropertyField(audioClip);
-            EditorGUILayout.PropertyField(audioType);
+            string[] groupNames = AudioController.GetGroupNamesEditorOnly();
+            int index = Array.IndexOf(groupNames, audioGroup.stringValue);
+            if (index == -1)
+            {
+                index = 0;
+                audioGroup.stringValue = groupNames[0];
+            }
+            audioGroup.stringValue = groupNames[EditorGUILayout.Popup(audioGroup.GetGUIContent(), index, groupNames)];
             EditorGUILayout.PropertyField(volume);
             EditorGUILayout.PropertyField(pitch);
             EditorGUILayout.PropertyField(priority);
