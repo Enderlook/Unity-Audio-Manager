@@ -11,7 +11,7 @@ namespace Enderlook.Unity.AudioManager
     [CreateAssetMenu(fileName = "Audio Sequence", menuName = "Enderlook/Audio Manager/Audio Sequence")]
     public sealed class AudioSequence : AudioFile
     {
-        [SerializeField, Tooltip("Audio files of this collection.\nAll of them will be played in sequential order whne is requested.")]
+        [SerializeField, Tooltip("Audio files of this collection.\nAll of them will be played in sequential order when is requested.")]
         private AudioFile[] files;
 
         internal override IAudioFileNextEnumerator StartEnumerator(AudioSource audioSource, bool loop)
