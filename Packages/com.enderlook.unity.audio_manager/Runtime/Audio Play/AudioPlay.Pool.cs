@@ -222,6 +222,8 @@ namespace Enderlook.Unity.AudioManager
 
             private static void ClearCompletePool()
             {
+                allowClearAt = Time.realtimeSinceStartup + MINIMUM_TIME_BETWEEN_CLEARS_IN_SECONDS;
+
                 Handle[] pool_ = pool;
                 int poolIndex_ = poolIndex;
 
