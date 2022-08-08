@@ -12,29 +12,29 @@
       "depth": 0,
       "source": "embedded",
       "dependencies": {
-        "com.enderlook.unity.toolset": "https://github.com/Enderlook/Unity-Toolset.git?path=Packages/com.enderlook.unity.toolset#com.enderlook.unity.toolset/v0.2.7"
+        "com.enderlook.unity.toolset": "https://github.com/Enderlook/Unity-Toolset.git?path=Packages/com.enderlook.unity.toolset#com.enderlook.unity.toolset/v0.6.0"
       }
     },
     "com.enderlook.unity.toolset": {
-      "version": "file:.com.enderlook.unity.toolset@0.2.7",
+      "version": "file:.com.enderlook.unity.toolset@0.6.0",
       "depth": 0,
       "source": "embedded",
       "dependencies": {
         "com.system.memory": "https://github.com/Enderlook/Unity-Net-Packages.git?path=Packages/com.system.memory#com.system.memory/v4.5.4",
-        "com.enderlook.unity.toolset.checking": "https://github.com/Enderlook/Unity-Toolset.git?path=Packages/com.enderlook.unity.toolset.checking#com.enderlook.unity.toolset.checking/v0.1.1",
-        "com.enderlook.unity.toolset.utils": "https://github.com/Enderlook/Unity-Toolset.git?path=Packages/com.enderlook.unity.toolset.utils#com.enderlook.unity.toolset.utils/v0.5.3"
+        "com.enderlook.unity.toolset.checking": "https://github.com/Enderlook/Unity-Toolset.git?path=Packages/com.enderlook.unity.toolset.checking#com.enderlook.unity.toolset.checking/v0.2.0",
+        "com.enderlook.unity.toolset.utils": "https://github.com/Enderlook/Unity-Toolset.git?path=Packages/com.enderlook.unity.toolset.utils#com.enderlook.unity.toolset.utils/v0.6.0"
       }
     },
     "com.enderlook.unity.toolset.checking": {
-      "version": "file:.com.enderlook.unity.toolset.checking@0.1.1",
+      "version": "file:.com.enderlook.unity.toolset.checking@0.2.0",
       "depth": 0,
       "source": "embedded",
       "dependencies": {
-        "com.enderlook.unity.toolset.utils": "https://github.com/Enderlook/Unity-Toolset.git?path=Packages/com.enderlook.unity.toolset.utils#com.enderlook.unity.toolset.utils/v0.5.4"
+        "com.enderlook.unity.toolset.utils": "https://github.com/Enderlook/Unity-Toolset.git?path=Packages/com.enderlook.unity.toolset.utils#com.enderlook.unity.toolset.utils/v0.6.0"
       }
     },
     "com.enderlook.unity.toolset.utils": {
-      "version": "file:.com.enderlook.unity.toolset.utils@0.4.1",
+      "version": "file:.com.enderlook.unity.toolset.utils@0.6.0",
       "depth": 0,
       "source": "embedded",
       "dependencies": {
