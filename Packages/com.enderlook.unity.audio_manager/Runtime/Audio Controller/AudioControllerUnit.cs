@@ -76,7 +76,7 @@ namespace Enderlook.Unity.AudioManager
             public AudioMixerGroup audioMixerGroup;
 
             [SerializeField, Tooltip("Name of the variable in the Audio Mixer that controls its volume.")]
-            private string VolumeName;
+            private string volumeName;
 
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public void UpdateVolume()
@@ -88,7 +88,7 @@ namespace Enderlook.Unity.AudioManager
                 if (audioMixer == null)
                     return;
 
-                audioMixer.SetFloat(VolumeName, isMuted ? -80 : (volume == 0 ? -80 : Mathf.Log(volume) * 20));
+                audioMixer.SetFloat(volumeName, isMuted ? -80 : (volume == 0 ? -80 : Mathf.Log(volume) * 20));
             }
         }
     }
