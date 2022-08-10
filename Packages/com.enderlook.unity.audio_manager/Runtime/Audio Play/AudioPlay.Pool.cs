@@ -148,11 +148,21 @@ namespace Enderlook.Unity.AudioManager
 
             private sealed class Gen2CollectCallback
             {
+                private readonly StrongBox<bool> isQuitting;
+
+                public Gen2CollectCallback()
+                {
+                    StrongBox<bool> isQuitting = new StrongBox<bool>();
+                    Application.quitting += () => isQuitting.Value = true;
+                    this.isQuitting = isQuitting;
+                }
+
                 ~Gen2CollectCallback()
                 {
                     // We can't execute clearing here because we are in the finalizer thread and clearing must happen in the Unity thread.
                     isClearingPoolRequested = true;
-                    GC.ReRegisterForFinalize(this);
+                    if (!isQuitting.Value)
+                        GC.ReRegisterForFinalize(this);
                 }
             }
 
