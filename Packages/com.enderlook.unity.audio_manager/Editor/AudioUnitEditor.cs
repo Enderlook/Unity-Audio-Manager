@@ -10,7 +10,7 @@ using UnityEngine;
 namespace Enderlook.Unity.AudioManager
 {
     [CustomEditor(typeof(AudioUnit)), CanEditMultipleObjects]
-    internal sealed class AudioUnityEditor : Editor
+    internal sealed class AudioUnitEditor : Editor
     {
         private static readonly GUIContent D3_SOUND_SETTINGS_CONTENT = new GUIContent("3D Sound Settings", "3D configuration of the audio file.");
         private static readonly GUIContent REVERB_ZONE_MIX_CONTENT = new GUIContent("");
