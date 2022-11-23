@@ -40,7 +40,12 @@ namespace Enderlook.Unity.AudioManager
                     throw new InvalidOperationException("No instance of " + nameof(AudioControllerUnit) + " was found in the Resources folder.");
             }
             configuration = controllers[0];
-            behaviour = new GameObject().AddComponent<AudioController>();
+            GameObject gameObject = new GameObject();
+#if UNITY_EDITOR
+            if (HideController)
+                gameObject.hideFlags = HideFlags.HideAndDontSave;
+#endif
+            behaviour = gameObject.AddComponent<AudioController>();
         }
 
         /// <summary>
