@@ -15,6 +15,15 @@ namespace Enderlook.Unity.AudioManager
         [SerializeField, Tooltip("Audio files of this bag.\nOne of them is randomly chosen when play is requested.")]
         private AudioFile[] files;
 
+#if UNITY_EDITOR
+        internal static AudioBag Create(AudioFile[] audioFiles)
+        {
+            AudioBag instance = CreateInstance<AudioBag>();
+            instance.files = audioFiles;
+            return instance;
+        }
+#endif
+
         internal override IAudioFileNextEnumerator StartEnumerator(AudioSource audioSource, bool loop)
         {
             AudioFile audioFile;

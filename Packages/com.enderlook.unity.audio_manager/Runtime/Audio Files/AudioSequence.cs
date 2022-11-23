@@ -14,6 +14,15 @@ namespace Enderlook.Unity.AudioManager
         [SerializeField, Tooltip("Audio files of this collection.\nAll of them will be played in sequential order when is requested.")]
         private AudioFile[] files;
 
+#if UNITY_EDITOR
+        internal static AudioSequence Create(AudioFile[] audioFiles)
+        {
+            AudioSequence instance = CreateInstance<AudioSequence>();
+            instance.files = audioFiles;
+            return instance;
+        }
+#endif
+
         internal override IAudioFileNextEnumerator StartEnumerator(AudioSource audioSource, bool loop)
         {
             AudioFile audioFile;

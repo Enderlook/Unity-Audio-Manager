@@ -69,6 +69,15 @@ namespace Enderlook.Unity.AudioManager
                 return once ?? (once = new OnceEnumerator(this));
         }
 
+#if UNITY_EDITOR
+        internal static AudioUnit Create(AudioClip audioClip)
+        {
+            AudioUnit instance = CreateInstance<AudioUnit>();
+            instance.audioClip = audioClip;
+            return instance;
+        }
+#endif
+
         private void Set(AudioSource audioSource)
         {
 #if DEBUG
