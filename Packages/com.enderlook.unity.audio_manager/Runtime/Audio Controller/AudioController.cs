@@ -98,7 +98,7 @@ namespace Enderlook.Unity.AudioManager
             => Instance.GetAudioGroup(audioGroupName).volume;
 
         /// <summary>
-        /// Get the volume of an audio group.
+        /// Set the volume of an audio group.
         /// </summary>
         /// <param name="audioGroupName">Name of the audio group.</param>
         /// <param name="volume">Volume of the specifeid audio group.</param>

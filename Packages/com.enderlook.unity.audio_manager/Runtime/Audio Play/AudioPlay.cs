@@ -56,7 +56,7 @@ namespace Enderlook.Unity.AudioManager
         }
 
         /// <summary>
-        /// Determines if this instance is default, i.e: was constructed from <c>default(AudioPlay)</c> or <c>new AudioPlay()</c>.
+        /// Determines if this instance is default, i.e: was constructed from <c>default(<see cref="AudioPlay"/>)</c> or <c><see langword="new"/> <see cref="AudioPlay"/>()</c>.
         /// </summary>
         public bool IsDefault => generation == GENERATION_DEFAULT;
 
@@ -183,8 +183,8 @@ namespace Enderlook.Unity.AudioManager
         }
 
         /// <summary>
-        /// Reanude the execution of an audio if <see cref="Pause"/> was executed.
-        /// Start from zero if has <see cref="Stop"/> was executed.
+        /// Reanude the execution of an audio if <see cref="Pause"/> was executed.<br/>
+        /// Start from zero if has <see cref="Stop"/> was executed.<br/>
         /// Start from zero if audio has finalized.
         /// </summary>
         /// <exception cref="ArgumentException">Throw when instance is default.</exception>
