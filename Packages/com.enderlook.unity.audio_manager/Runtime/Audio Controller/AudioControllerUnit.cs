@@ -10,7 +10,7 @@ namespace Enderlook.Unity.AudioManager
     /// <summary>
     /// Represent the global settings of the audio manager.
     /// </summary>
-    [CreateAssetMenu(fileName = "Global Audio Controller Configuration", menuName = "Enderlook/Audio Manager/Audio Controller Unit")]
+    [CreateAssetMenu(fileName = "Global Audio Controller Configuration", menuName = "Enderlook/Audio Manager/Global Audio Configuration")]
     internal sealed class AudioControllerUnit : ScriptableObject
     {
         [SerializeField, Tooltip("Audio groups.\nThe first group is special and is used to encompass all other groups.\nDo not reorder elements of this array or audio files will get corrupted.")]
