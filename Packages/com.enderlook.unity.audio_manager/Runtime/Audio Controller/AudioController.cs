@@ -51,7 +51,7 @@ namespace Enderlook.Unity.AudioManager
         /// <summary>
         /// Determines if the game is muted.
         /// </summary>
-        public static bool MasterVolumeMuted {
+        public static bool MasterIsMuted {
             get => Instance.GetAudioGroup(0).isMuted;
             set => Instance.GetAudioGroup(0).isMuted = value;
         }
@@ -78,7 +78,7 @@ namespace Enderlook.Unity.AudioManager
         /// </summary>
         /// <param name="audioGroupName">Name of the audio group.</param>
         /// <returns>Whenever the specifeid audio group is muted or not.</returns>
-        public static bool GetVolumeMuted(string audioGroupName)
+        public static bool GetMuted(string audioGroupName)
             => Instance.GetAudioGroup(audioGroupName).isMuted;
 
         /// <summary>
@@ -86,7 +86,7 @@ namespace Enderlook.Unity.AudioManager
         /// </summary>
         /// <param name="audioGroupName">Name of the audio group.</param>
         /// <param name="isMuted">Whenever the specifeid audio group is muted or not.</param>
-        public static bool SetVolumeMuted(string audioGroupName, bool isMuted)
+        public static bool SetMuted(string audioGroupName, bool isMuted)
             => Instance.GetAudioGroup(audioGroupName).isMuted = isMuted;
 
         /// <summary>
@@ -102,7 +102,7 @@ namespace Enderlook.Unity.AudioManager
         /// </summary>
         /// <param name="audioGroupName">Name of the audio group.</param>
         /// <param name="volume">Volume of the specifeid audio group.</param>
-        public static float SetVolume(string audioGroupName, float volume)
+        public static void SetVolume(string audioGroupName, float volume)
             => Instance.GetAudioGroup(audioGroupName).volume = volume;
 
         /// <summary>
