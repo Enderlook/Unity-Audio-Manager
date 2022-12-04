@@ -44,7 +44,7 @@ namespace Enderlook.Unity.AudioManager
 
         private sealed class Enumerator : IAudioFileNextEnumerator
         {
-            private AudioSequence sequence;
+            private readonly AudioSequence sequence;
             private int index;
             private IAudioFileNextEnumerator currentEnumerator;
 
@@ -76,7 +76,7 @@ namespace Enderlook.Unity.AudioManager
 
         private sealed class LoopEnumerator : IAudioFileNextEnumerator
         {
-            private AudioSequence sequence;
+            private readonly AudioSequence sequence;
             private int index;
             private IAudioFileNextEnumerator currentEnumerator;
 

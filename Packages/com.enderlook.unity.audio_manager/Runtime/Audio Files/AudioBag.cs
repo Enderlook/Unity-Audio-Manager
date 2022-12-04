@@ -46,7 +46,7 @@ namespace Enderlook.Unity.AudioManager
 
         private sealed class LoopEnumerator : IAudioFileNextEnumerator
         {
-            private AudioBag bag;
+            private readonly AudioBag bag;
             private IAudioFileNextEnumerator currentEnumerator;
 
             public LoopEnumerator(AudioBag bag, IAudioFileNextEnumerator currentEnumerator)
