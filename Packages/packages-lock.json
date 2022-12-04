@@ -7,38 +7,54 @@
       "dependencies": {},
       "hash": "d4fc38c92fb139b4184912f20556ab27a3b519fa"
     },
+    "com.enderlook.collections-extensions": {
+      "version": "file:.com.enderlook.collections-extensions@0.2.0",
+      "depth": 0,
+      "source": "embedded",
+      "dependencies": {}
+    },
+    "com.enderlook.collections.low_level": {
+      "version": "file:.com.enderlook.collections.low_level@0.8.0",
+      "depth": 0,
+      "source": "embedded",
+      "dependencies": {
+        "com.system.memory": "https://github.com/Enderlook/Unity-Net-Packages.git?path=Packages/com.system.memory#com.system.memory/v4.5.4",
+        "com.enderlook.collections-extensions": "https://github.com/Enderlook/Unity-Net-Packages.git?path=Packages/com.enderlook.collections-extensions#com.enderlook.collections-extensions/v0.2.0"
+      }
+    },
     "com.enderlook.unity.audio_manager": {
       "version": "file:com.enderlook.unity.audio_manager",
       "depth": 0,
       "source": "embedded",
       "dependencies": {
-        "com.enderlook.unity.toolset": "https://github.com/Enderlook/Unity-Toolset.git?path=Packages/com.enderlook.unity.toolset#com.enderlook.unity.toolset/v0.6.0"
+        "com.enderlook.unity.toolset": "https://github.com/Enderlook/Unity-Toolset.git?path=Packages/com.enderlook.unity.toolset#com.enderlook.unity.toolset/v0.7.0"
       }
     },
     "com.enderlook.unity.toolset": {
-      "version": "file:.com.enderlook.unity.toolset@0.6.0",
+      "version": "file:.com.enderlook.unity.toolset.toolset@0.7.0",
       "depth": 0,
       "source": "embedded",
       "dependencies": {
         "com.system.memory": "https://github.com/Enderlook/Unity-Net-Packages.git?path=Packages/com.system.memory#com.system.memory/v4.5.4",
-        "com.enderlook.unity.toolset.checking": "https://github.com/Enderlook/Unity-Toolset.git?path=Packages/com.enderlook.unity.toolset.checking#com.enderlook.unity.toolset.checking/v0.2.0",
-        "com.enderlook.unity.toolset.utils": "https://github.com/Enderlook/Unity-Toolset.git?path=Packages/com.enderlook.unity.toolset.utils#com.enderlook.unity.toolset.utils/v0.6.0"
+        "com.enderlook.unity.toolset.checking": "https://github.com/Enderlook/Unity-Toolset.git?path=Packages/com.enderlook.unity.toolset.checking#com.enderlook.unity.toolset.checking/v0.2.3",
+        "com.enderlook.unity.toolset.utils": "https://github.com/Enderlook/Unity-Toolset.git?path=Packages/com.enderlook.unity.toolset.utils#com.enderlook.unity.toolset.utils/v0.7.0"
       }
     },
     "com.enderlook.unity.toolset.checking": {
-      "version": "file:.com.enderlook.unity.toolset.checking@0.2.0",
+      "version": "file:.com.enderlook.unity.toolset.checking@0.2.3",
       "depth": 0,
       "source": "embedded",
       "dependencies": {
-        "com.enderlook.unity.toolset.utils": "https://github.com/Enderlook/Unity-Toolset.git?path=Packages/com.enderlook.unity.toolset.utils#com.enderlook.unity.toolset.utils/v0.6.0"
+        "com.enderlook.unity.toolset.utils": "https://github.com/Enderlook/Unity-Toolset.git?path=Packages/com.enderlook.unity.toolset.utils#com.enderlook.unity.toolset.utils/v0.7.0"
       }
     },
     "com.enderlook.unity.toolset.utils": {
-      "version": "file:.com.enderlook.unity.toolset.utils@0.6.0",
+      "version": "file:.com.enderlook.unity.toolset.utils@0.7.0",
       "depth": 0,
       "source": "embedded",
       "dependencies": {
-        "com.system.runtime.compiler_services.unsafe": "https://github.com/Enderlook/Unity-Net-Packages.git?path=Packages/com.system.runtime.compiler_services.unsafe#com.system.runtime.compiler_services.unsafe/v4.5.3"
+        "com.system.runtime.compiler_services.unsafe": "https://github.com/Enderlook/Unity-Net-Packages.git?path=Packages/com.system.runtime.compiler_services.unsafe#com.system.runtime.compiler_services.unsafe/v4.5.3",
+        "com.enderlook.collections.low_level": "https://github.com/Enderlook/Unity-Net-Packages.git?path=Packages/com.enderlook.collections.low_level#com.enderlook.collections.low_level/v0.8.0"
       }
     },
     "com.system.buffers": {

@@ -9,6 +9,6 @@
     "sound"
   ],
   "dependencies": {
-    "com.enderlook.unity.toolset": "https://github.com/Enderlook/Unity-Toolset.git?path=Packages/com.enderlook.unity.toolset#com.enderlook.unity.toolset/v0.6.0"
+    "com.enderlook.unity.toolset": "https://github.com/Enderlook/Unity-Toolset.git?path=Packages/com.enderlook.unity.toolset#com.enderlook.unity.toolset/v0.7.0"
   }
 }
